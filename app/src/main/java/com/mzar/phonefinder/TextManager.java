@@ -20,7 +20,6 @@ public class TextManager extends Service
 {
     private static final String KEY = "Ring!!"; //TEMPORARY!!
 
-    private static TextManager self = null;
     private MediaPlayer mediaPlayer;
     private AudioManager audioManager;
     private int prevVolume;
@@ -31,49 +30,44 @@ public class TextManager extends Service
         @Override
         public void onReceive(Context context, Intent intent)
         {
-            Object[] pdus = (Object[]) intent.getExtras().get("pdus");
-            SmsMessage incomingSMS = SmsMessage.createFromPdu((byte[])pdus[0]); //This may or may not get the entire text. Look into it further.
-            String sender = incomingSMS.getOriginatingAddress();
-            String message = incomingSMS.getMessageBody();
-
-            if(message.equals(KEY))
+            String intentAction = intent.getAction();
+            if(intentAction.equals("android.provider.Telephony.SMS_RECEIVED"))
             {
-                //Stores the current ringer volume, then sets the ringer volume to the device's max.
-                audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
-                prevVolume = audioManager.getStreamVolume(AudioManager.STREAM_RING);
-                audioManager.setStreamVolume(AudioManager.STREAM_RING,
-                        audioManager.getStreamMaxVolume(AudioManager.STREAM_RING),
-                        AudioManager.FLAG_ALLOW_RINGER_MODES);
+                Object[] pdus = (Object[]) intent.getExtras().get("pdus");
+                SmsMessage incomingSMS = SmsMessage.createFromPdu((byte[]) pdus[0]); //This may or may not get the entire text. Look into it further.
+                String sender = incomingSMS.getOriginatingAddress();
+                String message = incomingSMS.getMessageBody();
 
-                //Determines the device's ringtone, then plays it on loop.
-                Uri ringtoneURI = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
-                mediaPlayer = MediaPlayer.create(getApplicationContext(), ringtoneURI);
-                mediaPlayer.setLooping(true);
-                mediaPlayer.start();
-                isRinging = true;
+                if (message.equals(KEY)) {
+                    //Stores the current ringer volume, then sets the ringer volume to the device's max.
+                    audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+                    prevVolume = audioManager.getStreamVolume(AudioManager.STREAM_RING);
+                    audioManager.setStreamVolume(AudioManager.STREAM_RING,
+                            audioManager.getStreamMaxVolume(AudioManager.STREAM_RING),
+                            AudioManager.FLAG_ALLOW_RINGER_MODES);
+
+                    //Determines the device's ringtone, then plays it on loop.
+                    Uri ringtoneURI = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
+                    mediaPlayer = MediaPlayer.create(getApplicationContext(), ringtoneURI);
+                    mediaPlayer.setLooping(true);
+                    mediaPlayer.start();
+                    isRinging = true;
+                }
             }
+            else if(intentAction.equals(MainActivity.INTENT_STOP_RINGING))
+            {
+                if(isRinging)
+                {
+                    mediaPlayer.stop();
+                    audioManager.setStreamVolume(AudioManager.STREAM_RING,
+                            prevVolume, AudioManager.FLAG_ALLOW_RINGER_MODES);
+                    isRinging = false;
 
-            Toast.makeText(context, sender+": "+message, Toast.LENGTH_LONG).show();
+                    Toast.makeText(context, "Stopping.", Toast.LENGTH_SHORT).show();
+                }
+            }
         }
     };
-
-    public void stopRinging()
-    {
-        if(isRinging)
-        {
-            mediaPlayer.stop();
-            audioManager.setStreamVolume(AudioManager.STREAM_RING,
-                    prevVolume, AudioManager.FLAG_ALLOW_RINGER_MODES);
-            isRinging = false;
-
-            Toast.makeText(this, "Stopping.", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    public static TextManager getTextManager()
-    {
-        return self; //Implements singleton.
-    }
 
     @Override
     public IBinder onBind(Intent intent)
@@ -84,9 +78,9 @@ public class TextManager extends Service
     @Override
     public int onStartCommand(Intent intent, int flags, int startId)
     {
-        self = this;
         IntentFilter filter = new IntentFilter();
         filter.addAction("android.provider.Telephony.SMS_RECEIVED");
+        filter.addAction(MainActivity.INTENT_STOP_RINGING);
         registerReceiver(textReceiver, filter);
 
         Toast.makeText(this, "Phone Finder Activated.", Toast.LENGTH_SHORT).show();

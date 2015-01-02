@@ -13,8 +13,7 @@ import android.widget.Button;
 public class MainActivity extends ActionBarActivity
 {
     //USE SHARED PREFERENCES TO STORE KEY PHRASE
-
-    private TextManager textManager;// = TextManager.getTextManager();
+    public static final String INTENT_STOP_RINGING = "mzar.PhoneFinder.action.STOP_RINGING";
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -29,7 +28,6 @@ public class MainActivity extends ActionBarActivity
             public void onClick(View v)
             {
                 startService(new Intent(getBaseContext(), TextManager.class));
-                textManager = TextManager.getTextManager();
             }
         });
         Button button_stop = (Button)findViewById(R.id.button_stop);
@@ -39,7 +37,6 @@ public class MainActivity extends ActionBarActivity
             public void onClick(View v)
             {
                 stopService(new Intent(getBaseContext(), TextManager.class));
-                textManager = null;
             }
         });
         Button button_foundIt = (Button)findViewById(R.id.button_foundIt);
@@ -48,12 +45,9 @@ public class MainActivity extends ActionBarActivity
             @Override
             public void onClick(View v)
             {
-                if(textManager != null)
-                {
-                    textManager.stopRinging();
-                }
-                else
-                    Log.d("Text Manager", "NULL");
+                Intent stopRinging = new Intent();
+                stopRinging.setAction(INTENT_STOP_RINGING);
+                sendBroadcast(stopRinging);
             }
         });
     }
