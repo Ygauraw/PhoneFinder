@@ -14,6 +14,8 @@ public class MainActivity extends ActionBarActivity
 {
     //USE SHARED PREFERENCES TO STORE KEY PHRASE
 
+    private TextManager textManager;// = TextManager.getTextManager();
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -27,6 +29,7 @@ public class MainActivity extends ActionBarActivity
             public void onClick(View v)
             {
                 startService(new Intent(getBaseContext(), TextManager.class));
+                textManager = TextManager.getTextManager();
             }
         });
         Button button_stop = (Button)findViewById(R.id.button_stop);
@@ -36,10 +39,24 @@ public class MainActivity extends ActionBarActivity
             public void onClick(View v)
             {
                 stopService(new Intent(getBaseContext(), TextManager.class));
+                textManager = null;
+            }
+        });
+        Button button_foundIt = (Button)findViewById(R.id.button_foundIt);
+        button_foundIt.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                if(textManager != null)
+                {
+                    textManager.stopRinging();
+                }
+                else
+                    Log.d("Text Manager", "NULL");
             }
         });
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
