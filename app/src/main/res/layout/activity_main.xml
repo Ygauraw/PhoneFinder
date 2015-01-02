@@ -8,16 +8,15 @@
     <Button
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="Start Phone Finder"
+        android:text="@string/button_activate"
         android:id="@+id/button_start"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_below="@+id/textView_info"
+        android:layout_centerHorizontal="true" />
 
     <Button
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="Stop Phone Finder"
+        android:text="@string/button_deactivate"
         android:id="@+id/button_stop"
         android:layout_below="@+id/button_start"
         android:layout_alignParentLeft="true"
@@ -26,8 +25,47 @@
     <Button
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="Stop Ringing"
+        android:text="@string/button_stop_ringing"
         android:id="@+id/button_foundIt"
         android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:enabled="true" />
+
+    <EditText
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/editText_keywordField"
+        android:editable="true"
+        android:text="@string/default_ringer_key"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/textView_keywordPrompt"
+        android:inputType="text" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/text_keyword_prompt"
+        android:id="@+id/textView_keywordPrompt"
+        android:textSize="20sp"
+        android:layout_below="@+id/button_stop"
         android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:id="@+id/textView_info"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:text="@string/text_info" />
+
+    <Button
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/button_set_phrase"
+        android:id="@+id/button_setPhrase"
+        android:layout_above="@+id/button_foundIt"
+        android:layout_centerHorizontal="true" />
+
 </RelativeLayout>

@@ -18,10 +18,9 @@ import android.widget.Toast;
  */
 public class TextManager extends Service
 {
-    private static final String KEY = "Ring!!"; //TEMPORARY!!
-
     private MediaPlayer mediaPlayer;
     private AudioManager audioManager;
+    private String userPhrase = MainActivity.userPhrase;
     private int prevVolume;
     private boolean isRinging = false;
 
@@ -38,7 +37,8 @@ public class TextManager extends Service
                 String sender = incomingSMS.getOriginatingAddress();
                 String message = incomingSMS.getMessageBody();
 
-                if (message.equals(KEY)) {
+                if(message.equals(userPhrase))
+                {
                     //Stores the current ringer volume, then sets the ringer volume to the device's max.
                     audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
                     prevVolume = audioManager.getStreamVolume(AudioManager.STREAM_RING);
@@ -54,7 +54,7 @@ public class TextManager extends Service
                     isRinging = true;
                 }
             }
-            else if(intentAction.equals(MainActivity.INTENT_STOP_RINGING))
+            else if(intentAction.equals(getString(R.string.INTENT_STOP_RINGING)))
             {
                 if(isRinging)
                 {
@@ -62,9 +62,12 @@ public class TextManager extends Service
                     audioManager.setStreamVolume(AudioManager.STREAM_RING,
                             prevVolume, AudioManager.FLAG_ALLOW_RINGER_MODES);
                     isRinging = false;
-
                     Toast.makeText(context, "Stopping.", Toast.LENGTH_SHORT).show();
                 }
+            }
+            else if(intentAction.equals(getString(R.string.INTENT_PHRASE_CHANGED))) //Check for PHRASE_CHANGED
+            {
+                userPhrase = intent.getStringExtra(getString(R.string.EXTRA_USER_PHRASE));
             }
         }
     };
@@ -80,9 +83,9 @@ public class TextManager extends Service
     {
         IntentFilter filter = new IntentFilter();
         filter.addAction("android.provider.Telephony.SMS_RECEIVED");
-        filter.addAction(MainActivity.INTENT_STOP_RINGING);
+        filter.addAction(getString(R.string.INTENT_STOP_RINGING));
+        filter.addAction(getString(R.string.INTENT_PHRASE_CHANGED));
         registerReceiver(textReceiver, filter);
-
         Toast.makeText(this, "Phone Finder Activated.", Toast.LENGTH_SHORT).show();
         return START_STICKY;
     }
@@ -91,7 +94,6 @@ public class TextManager extends Service
     public void onDestroy()
     {
         unregisterReceiver(textReceiver);
-
         Toast.makeText(this, "Phone Finder Deactivated.", Toast.LENGTH_SHORT).show();
         super.onDestroy();
     }

@@ -2,9 +2,20 @@
 <resources>
 
     <string name="app_name">Phone Finder</string>
-    <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
 
-    <string name="ringer_key">Ring!</string>
+    <!-- UI Strings -->
+    <string name="button_activate">Activate Phone Finder</string>
+    <string name="button_deactivate">Deactivate Phone Finder</string>
+    <string name="button_set_phrase">Set phrase</string>
+    <string name="button_stop_ringing">Stop Ringing</string>
+    <string name="default_ringer_key">Ring!</string>
+    <string name="text_keyword_prompt">\nEnter your Phone Finder phrase:</string>
+    <string name="text_info">Phone Finder helps you find your phone by making it ring at maximum volume when it receives your phrase in a text message.\n</string>
+
+    <!-- String Constants -->
+    <string name="INTENT_STOP_RINGING">mzar.PhoneFinder.action.STOP_RINGING</string>
+    <string name="INTENT_PHRASE_CHANGED">mzar.PhoneFinder.action.PHRASE_CHANGED</string>
+    <string name="EXTRA_USER_PHRASE">mzar.PhoneFinder.extra.EXTRA_USER_PHRASE</string>
 
 </resources>
